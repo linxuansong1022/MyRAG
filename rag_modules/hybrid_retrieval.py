@@ -162,14 +162,8 @@ class HybridRetrievalModule:
         """
         
         try:
-            response = self.llm_client.chat.completions.create(
-                model=self.config.llm_model,
-                messages=[{"role": "user", "content": prompt}],
-                temperature=0.1,
-                max_tokens=500
-            )
-            
-            result = json.loads(response.choices[0].message.content.strip())
+            response = self.llm_client.invoke(prompt)
+            result = json.loads(response.content.strip())
             entity_keywords = result.get("entity_keywords", [])
             topic_keywords = result.get("topic_keywords", [])
             

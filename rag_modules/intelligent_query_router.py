@@ -112,14 +112,8 @@ class IntelligentQueryRouter:
         """
         
         try:
-            response = self.llm_client.chat.completions.create(
-                model=self.config.llm_model,
-                messages=[{"role": "user", "content": analysis_prompt}],
-                temperature=0.1,
-                max_tokens=800
-            )
-            
-            result = json.loads(response.choices[0].message.content.strip())
+            response = self.llm_client.invoke(analysis_prompt)
+            result = json.loads(response.content.strip())
             
             analysis = QueryAnalysis(
                 query_complexity=result.get("query_complexity", 0.5),

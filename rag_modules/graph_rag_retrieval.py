@@ -233,14 +233,8 @@ class GraphRAGRetrieval:
         """
         
         try:
-            response = self.llm_client.chat.completions.create(
-                model=self.config.llm_model,
-                messages=[{"role": "user", "content": prompt}],
-                temperature=0.1,
-                max_tokens=1000
-            )
-            
-            result = json.loads(response.choices[0].message.content.strip())
+            response = self.llm_client.invoke(prompt)
+            result = json.loads(response.content.strip())
             
             return GraphQuery(
                 query_type=QueryType(result.get("query_type", "subgraph")),

@@ -63,10 +63,12 @@ class MilvusIndexConstructionModule:
     def _setup_client(self):
         """初始化Milvus客户端"""
         try:
+            # 使用Milvus Lite (本地文件版本) 而不是远程服务器
+            # 这样可以避免Docker连接问题
             self.client = MilvusClient(
-                uri=f"http://{self.host}:{self.port}"
+                uri="./milvus_demo.db"  # 本地文件路径
             )
-            logger.info(f"已连接到Milvus服务器: {self.host}:{self.port}")
+            logger.info(f"已连接到Milvus Lite (本地文件): ./milvus_demo.db")
             
             # 测试连接
             collections = self.client.list_collections()
