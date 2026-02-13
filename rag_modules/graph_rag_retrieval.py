@@ -234,7 +234,23 @@ class GraphRAGRetrieval:
         
         try:
             response = self.llm_client.invoke(prompt)
-            result = json.loads(response.content.strip())
+            # 清理 Gemini 返回的 markdown 代码块和额外文字
+            content = response.content.strip()
+            
+            # 移除 ```json 和 ``` 标记
+            if content.startswith('```'):
+                content = content.split('\n', 1)[1] if '\n' in content else content
+            if content.endswith('```'):
+                content = content.rsplit('\n', 1)[0] if '\n' in content else content
+            content = content.strip()
+            
+            # 提取第一个完整的 JSON 对象（处理后面有额外文字的情况）
+            import re
+            json_match = re.search(r'\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}', content)
+            if json_match:
+                content = json_match.group(0)
+            
+            result = json.loads(content)
             
             return GraphQuery(
                 query_type=QueryType(result.get("query_type", "subgraph")),
